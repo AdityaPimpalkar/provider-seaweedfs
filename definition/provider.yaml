@@ -12,9 +12,12 @@ name: provider-seaweedfs
 # Add customSpecSchema to reference a Go type from components/types.go
 # when a component needs custom configuration fields.
 #
-# Example:
-#   engine:
-#     type: mongod
-#   backup:
-#     type: pbm
-components: {}
+components:
+  master:
+    type: seaweedfs
+  volume:
+    type: seaweedfs
+  filer:
+    type: seaweedfs
+  s3:
+    type: seaweedfs

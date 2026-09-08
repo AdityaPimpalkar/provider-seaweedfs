@@ -12,4 +12,9 @@
 #       image: example/my-database:1.0.0
 #       default: true
 
-componentTypes: {}
+componentTypes:
+  seaweedfs:
+    versions:
+      - version: "3.85"
+        image: chrislusf/seaweedfs:3.85
+        default: true

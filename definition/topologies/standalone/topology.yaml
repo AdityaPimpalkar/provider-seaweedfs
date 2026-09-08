@@ -1,0 +1,261 @@
+# Standalone topology definition.
+# This file defines both the structural topology and its UI rendering.
+#
+# config.components: Which components are used and their defaults.
+# config.configSchema: Reference a Go type for custom topology config fields.
+# ui: Rendering hints for the frontend form.
+#
+# See github.com/openeverest/provider-sdk/blob/main/PROVIDER_DEVELOPMENT.md
+# for detailed guidance.
+
+config:
+    components:
+        master:
+            defaults:
+                replicas: 3
+        volume:
+            defaults:
+                replicas: 2
+        filer:
+            defaults:
+                replicas: 1
+        s3:
+            defaults:
+                replicas: 1
+ui:
+    sections:
+        basicInfo:
+            components:
+                version:
+                    fieldParams:
+                        label: SeaweedFS Version
+                    path: spec.components.master.version
+                    uiType: select
+            description: Provide the basic information for your new SeaweedFS instance.
+            label: Basic Information
+        master:
+            components:
+                replicas:
+                    fieldParams:
+                        defaultValue: 1
+                        label: Master replicas
+                    path: spec.components.master.replicas
+                    uiType: number
+                    validation:
+                        int: true
+                        max: 5
+                        min: 1
+                        required: true
+                resources:
+                    components:
+                        cpu:
+                            fieldParams:
+                                badge: cores
+                                defaultValue: 0.5
+                                label: CPU
+                                step: 0.1
+                            path: spec.components.master.resources.requests.cpu
+                            uiType: number
+                            validation:
+                                min: 0.1
+                                required: true
+                        memory:
+                            fieldParams:
+                                badge: Gi
+                                badgeToApi: true
+                                defaultValue: 0.5
+                                label: Memory
+                                step: 0.1
+                            path: spec.components.master.resources.requests.memory
+                            uiType: number
+                            validation:
+                                min: 0.25
+                                required: true
+                    componentsOrder:
+                        - cpu
+                        - memory
+                    groupType: line
+                    uiType: group
+            componentsOrder:
+                - replicas
+                - resources
+            description: Configure the SeaweedFS master servers that coordinate the cluster.
+            label: Master
+        volume:
+            components:
+                replicas:
+                    fieldParams:
+                        defaultValue: 1
+                        label: Volume replicas
+                    path: spec.components.volume.replicas
+                    uiType: number
+                    validation:
+                        int: true
+                        max: 10
+                        min: 1
+                        required: true
+                resources:
+                    components:
+                        cpu:
+                            fieldParams:
+                                badge: cores
+                                defaultValue: 1
+                                label: CPU
+                                step: 0.1
+                            path: spec.components.volume.resources.requests.cpu
+                            uiType: number
+                            validation:
+                                min: 0.1
+                                required: true
+                        disk:
+                            fieldParams:
+                                badge: Gi
+                                badgeToApi: true
+                                defaultValue: 10
+                                label: Disk
+                            path: spec.components.volume.storage.size
+                            uiType: number
+                            validation:
+                                int: true
+                                max: 1000
+                                min: 1
+                                required: true
+                        memory:
+                            fieldParams:
+                                badge: Gi
+                                badgeToApi: true
+                                defaultValue: 1
+                                label: Memory
+                                step: 0.1
+                            path: spec.components.volume.resources.requests.memory
+                            uiType: number
+                            validation:
+                                min: 0.25
+                                required: true
+                    componentsOrder:
+                        - cpu
+                        - memory
+                        - disk
+                    groupType: line
+                    uiType: group
+            componentsOrder:
+                - replicas
+                - resources
+            description: Configure the volume servers that store object data.
+            label: Volume
+        filer:
+            components:
+                replicas:
+                    fieldParams:
+                        defaultValue: 1
+                        label: Filer replicas
+                    path: spec.components.filer.replicas
+                    uiType: number
+                    validation:
+                        int: true
+                        max: 5
+                        min: 1
+                        required: true
+                resources:
+                    components:
+                        cpu:
+                            fieldParams:
+                                badge: cores
+                                defaultValue: 0.5
+                                label: CPU
+                                step: 0.1
+                            path: spec.components.filer.resources.requests.cpu
+                            uiType: number
+                            validation:
+                                min: 0.1
+                                required: true
+                        disk:
+                            fieldParams:
+                                badge: Gi
+                                badgeToApi: true
+                                defaultValue: 1
+                                label: Disk
+                            path: spec.components.filer.storage.size
+                            uiType: number
+                            validation:
+                                int: true
+                                max: 100
+                                min: 1
+                                required: true
+                        memory:
+                            fieldParams:
+                                badge: Gi
+                                badgeToApi: true
+                                defaultValue: 0.5
+                                label: Memory
+                                step: 0.1
+                            path: spec.components.filer.resources.requests.memory
+                            uiType: number
+                            validation:
+                                min: 0.25
+                                required: true
+                    componentsOrder:
+                        - cpu
+                        - memory
+                        - disk
+                    groupType: line
+                    uiType: group
+            componentsOrder:
+                - replicas
+                - resources
+            description: Configure the filer that provides the filesystem namespace and metadata store.
+            label: Filer
+        s3:
+            components:
+                replicas:
+                    fieldParams:
+                        defaultValue: 1
+                        label: S3 replicas
+                    path: spec.components.s3.replicas
+                    uiType: number
+                    validation:
+                        int: true
+                        max: 5
+                        min: 1
+                        required: true
+                resources:
+                    components:
+                        cpu:
+                            fieldParams:
+                                badge: cores
+                                defaultValue: 0.5
+                                label: CPU
+                                step: 0.1
+                            path: spec.components.s3.resources.requests.cpu
+                            uiType: number
+                            validation:
+                                min: 0.1
+                                required: true
+                        memory:
+                            fieldParams:
+                                badge: Gi
+                                badgeToApi: true
+                                defaultValue: 0.5
+                                label: Memory
+                                step: 0.1
+                            path: spec.components.s3.resources.requests.memory
+                            uiType: number
+                            validation:
+                                min: 0.25
+                                required: true
+                    componentsOrder:
+                        - cpu
+                        - memory
+                    groupType: line
+                    uiType: group
+            componentsOrder:
+                - replicas
+                - resources
+            description: Configure the S3-compatible gateway for object access.
+            label: S3
+    sectionsOrder:
+        - basicInfo
+        - master
+        - volume
+        - filer
+        - s3
