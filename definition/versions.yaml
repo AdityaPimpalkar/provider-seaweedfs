@@ -12,4 +12,21 @@
 #       image: example/my-database:1.0.0
 #       default: true
 
-componentTypes: {}
+componentTypes:
+  seaweedfs:
+    versions:
+      - version: "3.85"
+        image: chrislusf/seaweedfs:3.85
+        default: true
+
+# Version bundles — curated sets of component versions known to work together.
+# Users set spec.version on an Instance to select a bundle.
+# The bundle with default: true is used when spec.version is omitted.
+versions:
+  - name: "3.85"
+    default: true
+    components:
+      master: "3.85"
+      volume: "3.85"
+      filer: "3.85"
+      s3: "3.85"
