@@ -31,8 +31,19 @@ spec:
             version:
               fieldParams:
                 label: SeaweedFS Version
-              path: spec.components.master.version
+                modes:
+                  edit:
+                    disabled: true
+                  restore:
+                    disabled: true
+                optionsPath: spec.versions
+                optionsPathConfig:
+                  labelPath: name
+                  valuePath: name
+              path: spec.version
               uiType: select
+              validation:
+                required: true
           description: Provide the basic information for your new SeaweedFS instance.
           label: Basic Information
         filer:
@@ -52,11 +63,11 @@ spec:
               components:
                 cpu:
                   fieldParams:
-                    badge: cores
+                    badge: Gi
                     defaultValue: 0.5
                     label: CPU
                     step: 0.1
-                  path: spec.components.filer.resources.requests.cpu
+                  path: spec.components.filer.resources.limits.cpu
                   uiType: number
                   validation:
                     min: 0.1
@@ -81,7 +92,7 @@ spec:
                     defaultValue: 0.5
                     label: Memory
                     step: 0.1
-                  path: spec.components.filer.resources.requests.memory
+                  path: spec.components.filer.resources.limits.memory
                   uiType: number
                   validation:
                     min: 0.25
@@ -101,7 +112,7 @@ spec:
           components:
             replicas:
               fieldParams:
-                defaultValue: 1
+                defaultValue: 3
                 label: Master replicas
               path: spec.components.master.replicas
               uiType: number
@@ -114,11 +125,11 @@ spec:
               components:
                 cpu:
                   fieldParams:
-                    badge: cores
+                    badge: Gi
                     defaultValue: 0.5
                     label: CPU
                     step: 0.1
-                  path: spec.components.master.resources.requests.cpu
+                  path: spec.components.master.resources.limits.cpu
                   uiType: number
                   validation:
                     min: 0.1
@@ -130,7 +141,7 @@ spec:
                     defaultValue: 0.5
                     label: Memory
                     step: 0.1
-                  path: spec.components.master.resources.requests.memory
+                  path: spec.components.master.resources.limits.memory
                   uiType: number
                   validation:
                     min: 0.25
@@ -162,11 +173,11 @@ spec:
               components:
                 cpu:
                   fieldParams:
-                    badge: cores
+                    badge: Gi
                     defaultValue: 0.5
                     label: CPU
                     step: 0.1
-                  path: spec.components.s3.resources.requests.cpu
+                  path: spec.components.s3.resources.limits.cpu
                   uiType: number
                   validation:
                     min: 0.1
@@ -178,7 +189,7 @@ spec:
                     defaultValue: 0.5
                     label: Memory
                     step: 0.1
-                  path: spec.components.s3.resources.requests.memory
+                  path: spec.components.s3.resources.limits.memory
                   uiType: number
                   validation:
                     min: 0.25
@@ -197,7 +208,7 @@ spec:
           components:
             replicas:
               fieldParams:
-                defaultValue: 1
+                defaultValue: 2
                 label: Volume replicas
               path: spec.components.volume.replicas
               uiType: number
@@ -210,11 +221,11 @@ spec:
               components:
                 cpu:
                   fieldParams:
-                    badge: cores
+                    badge: Gi
                     defaultValue: 1
                     label: CPU
                     step: 0.1
-                  path: spec.components.volume.resources.requests.cpu
+                  path: spec.components.volume.resources.limits.cpu
                   uiType: number
                   validation:
                     min: 0.1
@@ -239,7 +250,7 @@ spec:
                     defaultValue: 1
                     label: Memory
                     step: 0.1
-                  path: spec.components.volume.resources.requests.memory
+                  path: spec.components.volume.resources.limits.memory
                   uiType: number
                   validation:
                     min: 0.25
@@ -261,3 +272,11 @@ spec:
         - volume
         - filer
         - s3
+  versions:
+    - components:
+        filer: "3.85"
+        master: "3.85"
+        s3: "3.85"
+        volume: "3.85"
+      default: true
+      name: "3.85"
