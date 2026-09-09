@@ -5,7 +5,8 @@ const (
 	// ProviderName is the canonical name of this provider.
 	ProviderName = "provider-seaweedfs"
 
-	// TODO: Define component names matching those in provider-config.yaml.
-	// Example:
-	// ComponentDatabase = "provider-seaweedfs-db"
+	ComponentMaster = "master"
+	ComponentVolume = "volume"
+	ComponentFiler  = "filer"
+	ComponentS3     = "s3"
 )

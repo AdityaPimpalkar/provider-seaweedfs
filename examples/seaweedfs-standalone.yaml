@@ -1,0 +1,26 @@
+apiVersion: core.openeverest.io/v1alpha1
+kind: Instance
+metadata:
+  name: seaweedfs-standalone
+spec:
+  providerRef:
+    name: provider-seaweedfs
+  # topology:
+  #   type: standalone
+  components:
+    master:
+      type: seaweedfs
+      version: "3.85"
+      image: chrislusf/seaweedfs:3.85
+      replicas: 1
+    volume:
+      type: seaweedfs
+      replicas: 1
+      storage:
+        size: 10Gi
+    filer:
+      type: seaweedfs
+      replicas: 1
+    s3:
+      type: seaweedfs
+      replicas: 1
