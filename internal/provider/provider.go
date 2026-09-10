@@ -70,7 +70,8 @@ func (p *Provider) Sync(c *controller.Context) error {
 	sw := &seaweedv1.Seaweed{
 	  ObjectMeta: c.ObjectMeta(c.Name()),
 	  Spec: seaweedv1.SeaweedSpec{
-	    Image: master.Image, // from version catalog / master.version
+	    Image: master.Image,
+		//TODO: can be added via CustomSpec
 		VolumeServerDiskCount: pointer.ToInt32(1),
 	    Master: &seaweedv1.MasterSpec{Replicas: *master.Replicas, VolumeSizeLimitMB: pointer.ToInt32(1024) },
 	    Volume: &seaweedv1.VolumeSpec{Replicas: *volume.Replicas },
