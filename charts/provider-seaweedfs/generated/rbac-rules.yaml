@@ -49,3 +49,21 @@
     - get
     - list
     - watch
+- apiGroups:
+    - seaweed.seaweedfs.com
+  resources:
+    - seaweeds
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - seaweed.seaweedfs.com
+  resources:
+    - seaweeds/status
+  verbs:
+    - get

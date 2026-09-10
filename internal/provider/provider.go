@@ -4,10 +4,12 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
+	"github.com/AlekSi/pointer"
 	"github.com/openeverest/openeverest/v2/provider-runtime/controller"
 
-	// TODO: Import your operator's API types package, e.g.:
-	// operatorv1 "github.com/example/my-operator/api/v1"
+	seaweedv1 "github.com/seaweedfs/seaweedfs-operator/api/v1"
+
+	corev1 "k8s.io/api/core/v1"
 
 	"github.com/openeverest/provider-seaweedfs/internal/common"
 )
@@ -26,12 +28,10 @@ func New() *Provider {
 		BaseProvider: controller.BaseProvider{
 			ProviderName: common.ProviderName,
 			SchemeFuncs:  []func(*runtime.Scheme) error{
-				// TODO: Register your operator's scheme, e.g.:
-				// operatorv1.SchemeBuilder.AddToScheme,
+				seaweedv1.AddToScheme,
 			},
 			WatchConfigs: []controller.WatchConfig{
-				// TODO: Watch your operator's primary resource, e.g.:
-				// controller.WatchOwned(&operatorv1.MyDatabase{}),
+				controller.WatchOwned(&seaweedv1.Seaweed{}),
 			},
 		},
 	}
@@ -42,8 +42,6 @@ func New() *Provider {
 // Add your provider-specific validation logic here.
 // Return an error if the spec is invalid.
 //
-// +kubebuilder:rbac:groups=<operator-api-group>,resources=<operator-resources>,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=<operator-api-group>,resources=<operator-resources>/status,verbs=get
 func (p *Provider) Validate(c *controller.Context) error {
 	l := log.FromContext(c.Context())
 	l.Info("Validating instance", "name", c.Name())
@@ -64,21 +62,31 @@ func (p *Provider) Sync(c *controller.Context) error {
 	l := log.FromContext(c.Context())
 	l.Info("Syncing instance", "name", c.Name())
 
-	// TODO: Implement sync logic.
-	// Typical pattern:
-	//   1. Build the operator CR spec from the Instance spec
-	//   2. Use c.Apply() to create/update the operator resource
-	//
-	// Example:
-	//   cr := &operatorv1.MyDatabase{
-	//       ObjectMeta: metav1.ObjectMeta{
-	//           Name:      c.Name(),
-	//           Namespace: c.Namespace(),
-	//       },
-	//       Spec: buildSpec(c),
-	//   }
-	//   return c.Apply(cr)
-	return nil
+	master := c.Instance().Spec.Components[common.ComponentMaster]
+	volume := c.Instance().Spec.Components[common.ComponentVolume]
+	filer := c.Instance().Spec.Components[common.ComponentFiler]
+	s3 := c.Instance().Spec.Components[common.ComponentS3]
+
+	sw := &seaweedv1.Seaweed{
+	  ObjectMeta: c.ObjectMeta(c.Name()),
+	  Spec: seaweedv1.SeaweedSpec{
+	    Image: master.Image,
+		//TODO: can be added via CustomSpec
+		VolumeServerDiskCount: pointer.ToInt32(1),
+	    Master: &seaweedv1.MasterSpec{Replicas: *master.Replicas, VolumeSizeLimitMB: pointer.ToInt32(1024) },
+	    Volume: &seaweedv1.VolumeSpec{Replicas: *volume.Replicas },
+	    Filer:  &seaweedv1.FilerSpec{Replicas: *filer.Replicas },
+	    S3:     &seaweedv1.S3GatewaySpec{Replicas: *s3.Replicas },
+	  },
+	}
+
+	if volume.Storage != nil {
+		sw.Spec.Volume.Requests = corev1.ResourceList{
+			corev1.ResourceStorage: volume.Storage.Size,
+		}
+	}
+
+	return c.Apply(sw)
 }
 
 // Status computes the current status of the database instance.

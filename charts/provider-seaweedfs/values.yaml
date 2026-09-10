@@ -76,14 +76,14 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /schema
+    path: /healthz
     port: http
   initialDelaySeconds: 15
   periodSeconds: 20
 
 readinessProbe:
   httpGet:
-    path: /schema
+    path: /readyz
     port: http
   initialDelaySeconds: 5
   periodSeconds: 10
@@ -117,8 +117,9 @@ leaderElection:
   # -- Enable leader election (recommended for HA deployments)
   enabled: true
 
-# TODO: Add values for your operator subchart dependency, e.g.:
-# my-operator:
-#   replicaCount: 1
-#   rbac:
-#     create: true
+seaweedfs-operator:
+  enabled: true
+  crds:
+    create: true
+  rbac:
+    create: true

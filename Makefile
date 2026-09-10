@@ -23,6 +23,7 @@ GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
 
 # Helm chart directory
 CHART_DIR ?= charts/provider-seaweedfs
+SEAWEEDFS_OPERATOR_HELM_REPO ?= https://seaweedfs.github.io/seaweedfs-operator/
 
 .PHONY: help
 help: ## Display this help.
@@ -86,12 +87,18 @@ docker-push: ## Push docker image.
 
 ##@ Helm
 
+.PHONY: helm-deps
+helm-deps: ## Download Helm chart dependencies.
+	@helm repo add seaweedfs-operator $(SEAWEEDFS_OPERATOR_HELM_REPO) >/dev/null 2>&1 || true
+	helm repo update seaweedfs-operator
+	helm dependency update $(CHART_DIR)
+
 .PHONY: helm-install
-helm-install: ## Install the provider using Helm.
+helm-install: helm-deps ## Install the provider using Helm.
 	helm install provider-seaweedfs $(CHART_DIR) --create-namespace
 
 .PHONY: helm-upgrade
-helm-upgrade: ## Upgrade the provider using Helm.
+helm-upgrade: helm-deps ## Upgrade the provider using Helm.
 	helm upgrade provider-seaweedfs $(CHART_DIR)
 
 .PHONY: helm-uninstall
@@ -99,7 +106,7 @@ helm-uninstall: ## Uninstall the provider using Helm.
 	helm uninstall provider-seaweedfs
 
 .PHONY: helm-template
-helm-template: ## Render Helm chart templates locally (dry-run).
+helm-template: helm-deps ## Render Helm chart templates locally (dry-run).
 	helm template provider-seaweedfs $(CHART_DIR)
 
 ##@ Testing
